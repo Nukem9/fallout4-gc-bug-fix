@@ -143,7 +143,7 @@ if (MSVC)
 		PRIVATE
 			/sdl	# Enable Additional Security Checks
 			/utf-8	# Set Source and Executable character sets to UTF-8
-			/Zi	# Debug Information Format
+			/Zi		# Debug Information Format
 
 			/permissive-		# Standards conformance
 			/Zc:preprocessor	# Enable preprocessor conformance mode

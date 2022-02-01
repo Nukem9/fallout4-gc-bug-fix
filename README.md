@@ -1,14 +1,32 @@
 # Fallout 4 Garbage Collector Logger & Bug Fix
 
-<<< todo: writeup >>>
+<<< todo: actual coherent summary. writing isn't my forte. >>>
+```
+This is a compilation of debugging & research and will apply to all Fallout 4 script mods to some degree.
+
+Allocating too many arrays *and immediately discarding them* will overload the VM garbage collector.
+Allocating too many structs *and immediately discarding them* will overload the VM garbage collector.
+
+Incremental GC pass:
+Incremental GC runs once per Papyrus VM frame. ProcessArrayCleanup() and ProcessStructCleanup() are individually allotted 1% of the frame time budget. If a VM frame update takes 1 millisecond, they'll each have 10 microseconds to execute. It's *very* easy to allocate an excess of objects per frame to the point that the garbage collector can't keep up.
+
+Full GC pass (FullGarbageCollectionPass):
+Full GC runs on save or load. A "stop the world" GC pass will loop until there's no objects left to destroy. SS2's Long Save Bug happens when this cleanup occurs. The aforementioned loop, combined with the mistakes inside ProcessCleanup, cause time complexity to quickly spiral out of control.
+
+ProcessArrayCleanup and ProcessStructCleanup:
+Due to convoluted "last index" tracking, a bug was introduced that could cause both functions to prematurely break out of a loop and forgo their time slices after a single object was destroyed.
+```
+
+[Clayne](https://github.com/clayne) has provided an excellent perl script demo of the buggy ProcessCleanup function [here](https://github.com/clayne/random/blob/master/bin/fo4-gc-test).
 
 Based off of [CommonLibF4](https://github.com/Ryan-rsm-McKenzie/CommonLibF4) and its [example plugin](https://github.com/Ryan-rsm-McKenzie/CommonLibF4/tree/master/ExampleProject).
 
 # Table of contents
 
 * [Requirements](#Requirements)
-* [Quick start](#Building)
+* [Quick start](#Quick-start)
 * [Notes](#Notes)
+    * [Papyrus reproduction code](#Papyrus-reproduction-code)
     * [Original function pseudocode with bug included](#Original-function-pseudocode-with-bug-included)
     * [Rewritten function pseudocode with bug corrected](#Rewritten-function-pseudocode-with-bug-corrected)
     * [Full garbage collector pass pseudocode](#Full-garbage-collector-pass-pseudocode)
@@ -21,6 +39,7 @@ Based off of [CommonLibF4](https://github.com/Ryan-rsm-McKenzie/CommonLibF4) and
     * Microsoft Visual Studio 2019 or later
     * CMake 3.20 or later
     * Python 3
+    * vcpkg
 * Installation
     * [F4SE](http://f4se.silverlock.org/)
     * [Address Library](https://www.nexusmods.com/fallout4/mods/47327)
@@ -34,8 +53,34 @@ Based off of [CommonLibF4](https://github.com/Ryan-rsm-McKenzie/CommonLibF4) and
 
 # Notes
 
+## Papyrus reproduction code
+```papyrus
+Struct PlotSubClass
+EndStruct
+
+Function TestKillTheGarbageManWithStructs
+    int i = 0
+    while (i < 1000)
+        PlotSubClass a = new PlotSubClass
+        i += 1
+    endWhile
+EndFunction ; all vars immediately discarded
+
+Function TestKillTheGarbageManWithArrays
+    int i = 0
+    while (i < 1000)
+        PlotSubClass[] a = new PlotSubClass[0]
+        i += 1
+    endWhile
+EndFunction ; all vars immediately discarded
+
+Function ScriptEntryPoint()
+    TestKillTheGarbageManWithStructs()
+    TestKillTheGarbageManWithArrays()
+EndFunction
+```
+
 ## Original function pseudocode with bug included
----
 ```c++
 template<typename T>
 bool ProcessEntries(float TimeBudget, BSTArray<BSTSmartPointer<T>>& Elements, uint32_t& NextIndexToClean)
@@ -81,7 +126,6 @@ bool ProcessEntries(float TimeBudget, BSTArray<BSTSmartPointer<T>>& Elements, ui
 ```
 
 ## Rewritten function pseudocode with bug corrected
----
 ```c++
 template<typename T>
 bool ProcessEntries(float TimeBudget, BSTArray<BSTSmartPointer<T>>& Elements, uint32_t& NextIndexToClean)
@@ -125,7 +169,6 @@ bool ProcessEntries(float TimeBudget, BSTArray<BSTSmartPointer<T>>& Elements, ui
 ```
 
 ## Full garbage collector pass pseudocode
----
 ```c++
 //
 // "Ground truth" function to run a full garbage collector pass when a game save occurs.
@@ -177,7 +220,6 @@ void FullGarbageCollectionPass(VirtualMachine *VM)
 ```
 
 ## Log format
----
 ### Timestamps
 ```
 [19:38:20:145 TID 32280]
