@@ -1,0 +1,14 @@
+set(SOURCES
+	src/PCH.h
+	src/bugfix.cpp
+	src/bugfix.h
+	src/gctracehooks.cpp
+	src/gctracehooks.h
+	src/main.cpp
+	src/re_extras.cpp
+	src/re_extras.h
+	src/trace.cpp
+	src/trace.h
+	src/variabletracehooks.cpp
+	src/variabletracehooks.h
+)

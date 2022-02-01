@@ -1,0 +1,4 @@
+namespace Bugfix
+{
+	void InstallHooks();
+}

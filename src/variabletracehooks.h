@@ -1,0 +1,4 @@
+namespace VariableTraceHooks
+{
+	void InstallHooks();
+}

@@ -1,0 +1,4 @@
+namespace GCTraceHooks
+{
+	void InstallHooks();
+}

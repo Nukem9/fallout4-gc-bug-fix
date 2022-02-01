@@ -1,0 +1,14 @@
+{
+  "name": "gcbugfix",
+  "version-string": "1.0.0",
+  "description": "A F4SE plugin for tracing and a bug fix in Fallout 4's Papyrus garbage collector",
+  "homepage": "https://github.com/Nukem9/Fallout4GCBugFix",
+  "license": "MIT",
+  "dependencies": [
+    "boost-stl-interfaces",
+    "fmt",
+    "mmio",
+    "spdlog",
+    "xbyak"
+  ]
+}
