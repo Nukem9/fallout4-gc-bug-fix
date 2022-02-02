@@ -150,6 +150,10 @@ bool ProcessEntries(float TimeBudget, BSTArray<BSTSmartPointer<T>>& Elements, ui
             Elements.RemoveFast(index);
         }
 
+        // Wrap around if necessary
+        if (index-- == 0)
+            index = Elements.size() - 1;
+
         // Bail if out of time
         if (TimeBudget > 0 && BSPrecisionTimer::GetTimer() >= maxEndTime)
             break;
@@ -157,10 +161,6 @@ bool ProcessEntries(float TimeBudget, BSTArray<BSTSmartPointer<T>>& Elements, ui
         // Bail if we ran out of fresh entries
         if (maximumElementsChecked-- == 1)
             break;
-
-        // Wrap around if necessary
-        if (index-- == 0)
-            index = Elements.size() - 1;
     }
 
     NextIndexToClean = index;

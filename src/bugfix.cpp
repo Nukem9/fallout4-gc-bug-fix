@@ -48,6 +48,10 @@ namespace Bugfix
 				BSTArrayRemoveFast(Elements, index);
 			}
 
+			// Wrap around if necessary
+			if (index-- == 0)
+				index = Elements.size() - 1;
+
 			// Bail if out of time
 			if (TimeBudget > 0 && RE::BSPrecisionTimer::GetTimer() >= maxEndTime)
 				break;
@@ -55,10 +59,6 @@ namespace Bugfix
 			// Bail if we ran out of fresh entries
 			if (maximumElementsChecked-- == 1)
 				break;
-
-			// Wrap around if necessary
-			if (index-- == 0)
-				index = Elements.size() - 1;
 		}
 
 		NextIndexToClean = index;
