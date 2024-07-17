@@ -1,8 +1,8 @@
+#include "bugfix.h"
 #include "gctracehooks.h"
 #include "variabletracehooks.h"
-#include "bugfix.h"
 
-extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface *F4SE, F4SE::PluginInfo *Info)
+extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface* F4SE, F4SE::PluginInfo* Info)
 {
 #ifndef NDEBUG
 	auto sink = std::make_shared<spdlog::sinks::msvc_sink_mt>();
@@ -34,24 +34,39 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface *F
 	Info->name = Version::PROJECT.data();
 	Info->version = Version::MAJOR;
 
-	if (F4SE->IsEditor())
-	{
+	if (F4SE->IsEditor()) {
 		logger::critical("Loaded in editor"sv);
 		return false;
 	}
 
 	const auto ver = F4SE->RuntimeVersion();
 
-	if (ver < F4SE::RUNTIME_1_10_162)
-	{
-		logger::critical(FMT_STRING("Unsupported runtime v{}"), ver.string());
-		return false;
+	if (ver < (REL::Relocate(F4SE::RUNTIME_1_10_163, F4SE::RUNTIME_LATEST, F4SE::RUNTIME_LATEST_VR))) {
+		F4SE::stl::report_and_fail(
+			fmt::format(FMT_STRING("{} does not support runtime v{}."),
+				Info->name,
+				ver.string()));
 	}
 
 	return true;
 }
 
-extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Load(const F4SE::LoadInterface *F4SE)
+extern "C" DLLEXPORT constinit auto F4SEPlugin_Version = []() noexcept {
+	F4SE::PluginVersionData data{};
+
+	data.PluginVersion({ Version::MAJOR, Version::MINOR, Version::PATCH });
+	data.PluginName(Version::PROJECT.data());
+	data.AuthorName("nukem9");
+	data.UsesAddressLibrary(true);
+	data.UsesSigScanning(false);
+	data.IsLayoutDependent(true);
+	data.HasNoStructUse(false);
+	data.CompatibleVersions({ F4SE::RUNTIME_LATEST });
+
+	return data;
+}();
+
+extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Load(const F4SE::LoadInterface* F4SE)
 {
 	F4SE::Init(F4SE);
 
