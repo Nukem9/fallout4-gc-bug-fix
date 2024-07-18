@@ -28,7 +28,7 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface* F
 	spdlog::set_default_logger(std::move(log));
 	spdlog::set_pattern("[%H:%M:%S:%e TID %5t] %v"s);
 
-	spdlog::info("{} v{}.{}.0", BUILD_PROJECT_NAME, BUILD_VERSION_MAJOR, BUILD_VERSION_MINOR);
+	spdlog::info("{} v{}.{}", BUILD_PROJECT_NAME, BUILD_VERSION_MAJOR, BUILD_VERSION_MINOR);
 
 	Info->infoVersion = F4SE::PluginInfo::kVersion;
 	Info->name = BUILD_PROJECT_NAME;
@@ -43,7 +43,7 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface* F
 
 	if (ver < REL::Relocate(F4SE::RUNTIME_1_10_162, F4SE::RUNTIME_1_10_162, F4SE::RUNTIME_LATEST_VR)) {
 		F4SE::stl::report_and_fail(
-			fmt::format(FMT_STRING("{} does not support runtime v{}."),
+			fmt::format("{} does not support runtime v{}.",
 				Info->name,
 				ver.string()));
 	}
@@ -74,21 +74,22 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Load(const F4SE::LoadInterface* F4S
 	int logFlushTime = GetPrivateProfileIntA("GC", "LogFlushTime", 5, iniPath);
 	int logGCPasses = GetPrivateProfileIntA("GC", "LogPasses", 0, iniPath);
 	int traceGCVariables = GetPrivateProfileIntA("GC", "TraceVariables", 0, iniPath);
-	int applyFix = GetPrivateProfileIntA("GC", "ApplyFix", 0, iniPath);
+	int applyFix = GetPrivateProfileIntA("GC", "ApplyFix", 1, iniPath);
 
-	spdlog::flush_every(std::chrono::seconds(logFlushTime));
-	logger::info(FMT_STRING("LogFlushTime = {}"), logFlushTime);
-	logger::info(FMT_STRING("LogPasses = {}"), logGCPasses);
-	logger::info(FMT_STRING("TraceVariables = {}"), traceGCVariables);
-	logger::info(FMT_STRING("ApplyFix = {}"), applyFix);
+	if (logGCPasses != 0 || traceGCVariables != 0)
+		spdlog::flush_every(std::chrono::seconds(logFlushTime));
 
-	// Alloc trampoline space
+	logger::info("LogFlushTime = {}", logFlushTime);
+	logger::info("LogPasses = {}", logGCPasses);
+	logger::info("TraceVariables = {}", traceGCVariables);
+	logger::info("ApplyFix = {}", applyFix);
+
+	// Set up hooks
 	auto& trampoline = F4SE::GetTrampoline();
 
 	if (trampoline.empty())
-		F4SE::AllocTrampoline(1024);
+		F4SE::AllocTrampoline(512);
 
-	// Set up hooks
 	if (logGCPasses)
 		GCTraceHooks::InstallHooks();
 
