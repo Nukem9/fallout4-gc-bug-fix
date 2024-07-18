@@ -1,2 +1,6 @@
-/build*
+# Visual Studio/Visual Studio Code cache and options directories
+.vscode/*
 .vs/*
+
+# Artifacts
+bin/*

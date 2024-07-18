@@ -1,72 +1,77 @@
 {
+  "version": 6,
   "configurePresets": [
     {
-      "binaryDir": "${sourceDir}/build",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": {
-          "type": "STRING",
-          "value": "Debug"
-        }
-      },
-      "errors": {
-        "deprecated": true
-      },
+      "name": "config-base-vcpkg",
       "hidden": true,
-      "name": "cmake-dev",
-      "warnings": {
-        "deprecated": true,
-        "dev": true
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static",
+        "VCPKG_OVERLAY_PORTS": "${sourceDir}/vcpkg-ports"
       }
     },
     {
-      "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": {
-          "type": "STRING",
-          "value": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
-        },
-        "VCPKG_OVERLAY_PORTS": {
-          "type": "STRING",
-          "value": "${sourceDir}/extern/CommonLibF4/cmake/ports/"
-        },
-        "VCPKG_OVERLAY_TRIPLETS": {
-          "type": "STRING",
-          "value": "${sourceDir}/cmake/triplets/"
-        }
-      },
+      "name": "config-base-cmake",
       "hidden": true,
-      "name": "vcpkg"
+      "binaryDir": "${sourceDir}/bin/${presetName}",
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE": "TRUE"
+      }
     },
     {
-      "cacheVariables": {
-        "Boost_USE_STATIC_RUNTIME": {
-          "type": "BOOL",
-          "value": "OFF"
-        },
-        "CMAKE_MSVC_RUNTIME_LIBRARY": {
-          "type": "STRING",
-          "value": "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
-        },
-        "VCPKG_TARGET_TRIPLET": {
-          "type": "STRING",
-          "value": "x64-windows-custom"
-        }
-      },
+      "name": "config-base-ninja",
       "hidden": true,
-      "name": "windows"
+      "generator": "Ninja Multi-Config",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "/MP /diagnostics:caret",
+        "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+      }
     },
     {
-      "cacheVariables": {
-        "CMAKE_CXX_FLAGS": "/EHsc /MP /W4 /WX"
-      },
+      "name": "config-base-msvc2022",
+      "hidden": true,
       "generator": "Visual Studio 17 2022",
+      "architecture": {
+        "value": "x64"
+      },
       "inherits": [
-        "cmake-dev",
-        "vcpkg",
-        "windows"
-      ],
-      "name": "vs2022-windows-vcpkg",
-      "toolset": "v143"
+        "config-base-ninja"
+      ]
+    },
+    {
+      "name": "f4se",
+      "inherits": [
+        "config-base-vcpkg",
+        "config-base-cmake",
+        "config-base-ninja"
+      ]
     }
   ],
-  "version": 2
+  "buildPresets": [
+    {
+      "name": "f4se-debug",
+      "configurePreset": "f4se",
+      "configuration": "Debug",
+      "displayName": "F4SE Debug"
+    },
+    {
+      "name": "f4se-release",
+      "configurePreset": "f4se",
+      "configuration": "Release",
+      "displayName": "F4SE Release"
+    }
+  ],
+  "packagePresets": [
+    {
+      "name": "f4se",
+      "displayName": "Package F4SE",
+      "configurePreset": "f4se",
+      "packageDirectory": "${sourceDir}/bin/built-packages"
+    }
+  ]
 }

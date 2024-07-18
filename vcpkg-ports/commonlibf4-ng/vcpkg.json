@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+  "name": "commonlibf4-ng",
+  "version-string": "1.0.0",
+  "description": "A reverse engineered resource for developing F4SE plugins for Fallout 4",
+  "homepage": "https://github.com/alandtse/CommonLibF4",
+  "license": "MIT",
+  "supports": "windows & x64",
+  "dependencies": [
+    "boost-stl-interfaces",
+    "fmt",
+    "rapidcsv",
+    "rsm-mmio",
+    "spdlog",
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}

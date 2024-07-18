@@ -12,7 +12,7 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface* F
 		return false;
 	}
 
-	*path /= fmt::format(FMT_STRING("{}.log"), Version::PROJECT);
+	*path /= fmt::format("{}.log", BUILD_PROJECT_NAME);
 	auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(path->string(), true);
 #endif
 
@@ -28,11 +28,11 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface* F
 	spdlog::set_default_logger(std::move(log));
 	spdlog::set_pattern("[%H:%M:%S:%e TID %5t] %v"s);
 
-	logger::info(FMT_STRING("{} v{}"), Version::PROJECT, Version::NAME);
+	spdlog::info("{} v{}.{}.0", BUILD_PROJECT_NAME, BUILD_VERSION_MAJOR, BUILD_VERSION_MINOR);
 
 	Info->infoVersion = F4SE::PluginInfo::kVersion;
-	Info->name = Version::PROJECT.data();
-	Info->version = Version::MAJOR;
+	Info->name = BUILD_PROJECT_NAME;
+	Info->version = BUILD_VERSION_MAJOR;
 
 	if (F4SE->IsEditor()) {
 		logger::critical("Loaded in editor"sv);
@@ -54,9 +54,9 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface* F
 extern "C" DLLEXPORT constinit auto F4SEPlugin_Version = []() noexcept {
 	F4SE::PluginVersionData data{};
 
-	data.PluginVersion({ Version::MAJOR, Version::MINOR, Version::PATCH });
-	data.PluginName(Version::PROJECT.data());
 	data.AuthorName("nukem9");
+	data.PluginVersion({ BUILD_VERSION_MAJOR, BUILD_VERSION_MINOR, 0 });
+	data.PluginName(BUILD_PROJECT_NAME);
 	data.UsesAddressLibrary(true);
 	data.UsesSigScanning(false);
 	data.IsLayoutDependent(true);

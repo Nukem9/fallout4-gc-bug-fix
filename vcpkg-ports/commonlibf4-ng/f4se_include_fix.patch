@@ -1,0 +1,12 @@
+diff --git a/CommonLibF4/CMakeLists.txt b/CommonLibF4/CMakeLists.txt
+index 1aaf32e..7b2e7e7 100644
+--- a/CommonLibF4/CMakeLists.txt
++++ b/CommonLibF4/CMakeLists.txt
+@@ -178,6 +178,7 @@ install(
+ 	"include/RE"
+ 	"include/REL"
+ 	"include/REX"
++	"include/F4SE"
+ 	DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+ )
+ 

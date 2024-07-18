@@ -19,8 +19,6 @@ namespace logger = F4SE::log;
 
 using namespace std::literals;
 
-#include "Version.h"
-
 template<typename Func>
 auto WriteHookWithReturn(REL::ID ID, size_t ByteCopyCount, Func Dest)
 {

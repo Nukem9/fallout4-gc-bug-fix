@@ -1,15 +1,10 @@
 {
-  "name": "gcbugfix",
-  "version-string": "1.0.0",
-  "description": "A F4SE plugin for tracing and a bug fix in Fallout 4's Papyrus garbage collector",
-  "homepage": "https://github.com/Nukem9/Fallout4GCBugFix",
-  "license": "MIT",
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "supports": "windows & x64",
   "dependencies": [
-    "boost-stl-interfaces",
-    "fmt",
-    "rapidcsv",
-    "rsm-mmio",
+    "commonlibf4-ng",
     "spdlog",
     "xbyak"
-  ]
+  ],
+  "builtin-baseline": "47bf3d1ac192b3fa0feb6e6ac9c845de179eebe9"
 }
