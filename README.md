@@ -260,4 +260,4 @@ void FullGarbageCollectionPass(VirtualMachine *VM)
 
 # License
 
-* [MIT](LICENSE)
+* [GPLv3](COPYING) with [exceptions](EXCEPTIONS)
