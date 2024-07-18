@@ -41,7 +41,7 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface* F
 
 	const auto ver = F4SE->RuntimeVersion();
 
-	if (ver < (REL::Relocate(F4SE::RUNTIME_1_10_163, F4SE::RUNTIME_LATEST, F4SE::RUNTIME_LATEST_VR))) {
+	if (ver < REL::Relocate(F4SE::RUNTIME_1_10_162, F4SE::RUNTIME_1_10_162, F4SE::RUNTIME_LATEST_VR)) {
 		F4SE::stl::report_and_fail(
 			fmt::format(FMT_STRING("{} does not support runtime v{}."),
 				Info->name,
@@ -52,16 +52,16 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface* F
 }
 
 extern "C" DLLEXPORT constinit auto F4SEPlugin_Version = []() noexcept {
-	F4SE::PluginVersionData data{};
+	F4SE::PluginVersionData data = {};
 
-	data.AuthorName("nukem9");
 	data.PluginVersion({ BUILD_VERSION_MAJOR, BUILD_VERSION_MINOR, 0 });
 	data.PluginName(BUILD_PROJECT_NAME);
+	data.AuthorName("Nukem");
 	data.UsesAddressLibrary(true);
 	data.UsesSigScanning(false);
 	data.IsLayoutDependent(true);
 	data.HasNoStructUse(false);
-	data.CompatibleVersions({ F4SE::RUNTIME_LATEST });
+	data.CompatibleVersions({ F4SE::RUNTIME_1_10_162, F4SE::RUNTIME_1_10_163 });
 
 	return data;
 }();
