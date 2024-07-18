@@ -1,7 +1,8 @@
 # Fallout 4 Garbage Collector Logger & Bug Fix
 
-<<< todo: actual coherent summary. writing isn't my forte. >>>
 ```
+<<< todo: actual coherent summary. writing isn't my forte. >>>
+
 This is a compilation of debugging & research and will apply to all Fallout 4 script mods to some degree.
 
 Allocating too many arrays *and immediately discarding them* will overload the VM garbage collector.
@@ -19,7 +20,7 @@ Due to convoluted "last index" tracking, a bug was introduced that could cause b
 
 [Clayne](https://github.com/clayne) has provided an excellent perl script demo of the buggy ProcessCleanup function [here](https://github.com/clayne/random/blob/master/bin/fo4-gc-test).
 
-Based off of [CommonLibF4](https://github.com/Ryan-rsm-McKenzie/CommonLibF4) and its [example plugin](https://github.com/Ryan-rsm-McKenzie/CommonLibF4/tree/master/ExampleProject).
+Based off of [CommonLibF4](https://github.com/Ryan-rsm-McKenzie/CommonLibF4) and its [example plugin](https://github.com/Ryan-rsm-McKenzie/CommonLibF4/tree/master/ExampleProject) along with Fallout 4 VR support.
 
 # Table of contents
 
@@ -36,9 +37,8 @@ Based off of [CommonLibF4](https://github.com/Ryan-rsm-McKenzie/CommonLibF4) and
 # Requirements
 
 * Building
-    * Microsoft Visual Studio 2019 or later
-    * CMake 3.20 or later
-    * Python 3
+    * Microsoft Visual Studio 2022 or later
+    * CMake 3.26 or later
     * vcpkg
 * Installation
     * [F4SE](http://f4se.silverlock.org/)
@@ -47,8 +47,8 @@ Based off of [CommonLibF4](https://github.com/Ryan-rsm-McKenzie/CommonLibF4) and
 
 # Quick start
 
-1. Clone repository & configure
-2. Run `cmake --build build --config Release --target create_artifact`
+1. Clone this repository and any submodules
+2. Run `cmake --preset f4se & cmake --build --preset f4se-release & cpack --preset f4se`
 3. Copy DLL and INI build artifacts to the game folder
 
 # Notes

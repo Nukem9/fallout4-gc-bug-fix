@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.26)
 
 project(
     GCBugFix
-    VERSION 1.0
+    VERSION 1.1
     LANGUAGES CXX
 )
 
@@ -17,20 +17,21 @@ add_subdirectory("${PROJECT_SOURCE_PATH}")
 #
 # And finally produce build artifacts
 #
+set(PLUGIN_LOADER_OUTPUT_DIR "Data/F4SE/Plugins/")
 set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION_MAJOR}_${CMAKE_PROJECT_VERSION_MINOR}")
 
 install(
     FILES
         "${PROJECT_RESOURCES_PATH}/GCBugFix.ini"
     DESTINATION
-        "/"
+        "${PLUGIN_LOADER_OUTPUT_DIR}"
 )
 
 install(
     TARGETS
         f4se_output_dll
     RUNTIME
-        DESTINATION "Data/F4SE/Plugins/"
+        DESTINATION "${PLUGIN_LOADER_OUTPUT_DIR}"
 )
 
 set(CPACK_GENERATOR "ZIP")
